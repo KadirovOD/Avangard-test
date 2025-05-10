@@ -1,0 +1,449 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bolalarning Qiziqish va Qobiliyatlarini Aniqlash Testi</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      max-width: 600px;
+      width: 100%;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+    .question {
+      display: none;
+      margin-bottom: 20px;
+    }
+    .question p {
+      font-size: 18px;
+      color: #444;
+      margin-bottom: 10px;
+    }
+    .options label {
+      display: block;
+      padding: 10px;
+      background: #f9f9f9;
+      margin: 5px 0;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .options label:hover {
+      background: #e0e0e0;
+    }
+    input[type="radio"] {
+      margin-right: 10px;
+    }
+    button, input[type="submit"] {
+      background: #007bff;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      display: block;
+      margin: 20px auto;
+      width: 200px;
+      text-align: center;
+    }
+    button:hover, input[type="submit"]:hover {
+      background: #0056b3;
+    }
+    #progress-container {
+      width: 100%;
+      background-color: #ddd;
+      height: 20px;
+      margin-bottom: 20px;
+    }
+    #progress-bar {
+      width: 0%;
+      height: 100%;
+      background-color: #4CAF50;
+    }
+    #result, #contact-form {
+      display: none;
+      text-align: center;
+      margin-top: 20px;
+    }
+    #result h2 {
+      color: #007bff;
+      font-size: 22px;
+    }
+    #result-text {
+      text-align: left;
+    }
+    #contact-form input[type="text"],
+    #contact-form input[type="tel"] {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+    @media (max-width: 600px) {
+      .container {
+        padding: 15px;
+      }
+      h1 {
+        font-size: 20px;
+      }
+      .question p {
+        font-size: 16px;
+      }
+      button, input[type="submit"] {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="logo.png" alt="Avangard Tabiiy Fanlar Maktabi Logosi" style="max-width: 200px; display: block; margin: 0 auto 20px;">
+    <h1>Bolangizning Qiziqish va Qobiliyatlarini Aniqlang!</h1>
+    <p>Ushbu test Myers-Briggs va Holland Code (RIASEC) metodologiyalari asosida tuzilgan bo'lib, bolangizning shaxsiy xususiyatlari va qiziqishlarini aniqlashga yordam beradi. Test natijalari bolangizning turli kasblarga, jumladan, shifokorlikka qanchalik mos kelishini foizlarda ko'rsatadi.</p>
+    <div id="progress-container">
+      <div id="progress-bar"></div>
+    </div>
+    <form id="quiz-form" netlify>
+      <div id="questions">
+        <div class="question" data-index="1">
+          <p>1. Bolangiz yangi narsalarni o‘rganishga qiziqadimi?</p>
+          <div class="options">
+            <label><input type="radio" name="q1" value="E" required> Ha, doimo yangi narsalarni sinab ko‘radi</label>
+            <label><input type="radio" name="q1" value="I"> Ko‘proq tanish narsalarni afzal ko‘radi</label>
+          </div>
+        </div>
+        <div class="question" data-index="2">
+          <p>2. Bolangiz guruhda ishlashni yoki yolg‘iz ishlashni afzal ko‘radimi?</p>
+          <div class="options">
+            <label><input type="radio" name="q2" value="E" required> Guruhda ishlashni yaxshi ko‘radi</label>
+            <label><input type="radio" name="q2" value="I"> Yolg‘iz ishlashni afzal ko‘radi</label>
+          </div>
+        </div>
+        <div class="question" data-index="3">
+          <p>3. Bolangiz qaror qabul qilishda his-tuyg‘ulariga ko‘proq tayanadimi?</p>
+          <div class="options">
+            <label><input type="radio" name="q3" value="F" required> Ha, his-tuyg‘ulariga tayanadi</label>
+            <label><input type="radio" name="q3" value="T"> Yo‘q, mantiqqa asoslanadi</label>
+          </div>
+        </div>
+        <div class="question" data-index="4">
+          <p>4. Bolangiz reja tuzishni yaxshi ko‘radimi yoki o‘z-o‘zidan harakat qiladimi?</p>
+          <div class="options">
+            <label><input type="radio" name="q4" value="J" required> Reja tuzishni afzal ko‘radi</label>
+            <label><input type="radio" name="q4" value="P"> O‘z-o‘zidan harakat qilishni yaxshi ko‘radi</label>
+          </div>
+        </div>
+        <div class="question" data-index="5">
+          <p>5. Bolangiz tabiat va hayvonlarni o‘rganishga qiziqadimi?</p>
+          <div class="options">
+            <label><input type="radio" name="q5" value="I" required> Ha, tabiatni sevadi</label>
+            <label><input type="radio" name="q5" value="0"> Unchalik qiziqmaydi</label>
+          </div>
+        </div>
+        <div class="question" data-index="6">
+          <p>6. Bolangiz ijodiy ishlar (masalan, rasm chizish, yozish) bilan shug‘ullanishni yoqtiradimi?</p>
+          <div class="options">
+            <label><input type="radio" name="q6" value="A" required> Ha, ijodiy ishlarni yaxshi ko‘radi</label>
+            <label><input type="radio" name="q6" value="0"> Ko‘proq amaliy ishlarni afzal ko‘radi</label>
+          </div>
+        </div>
+        <div class="question" data-index="7">
+          <p>7. Bolangiz muammolarni hal qilishda tahlil qilishni yaxshi ko‘radimi?</p>
+          <div class="options">
+            <label><input type="radio" name="q7" value="T" required> Ha, tahlil qilishni yoqtiradi</label>
+            <label><input type="radio" name="q7" value="F"> Ko‘proq intuitiv yechim topadi</label>
+          </div>
+        </div>
+        <div class="question" data-index="8">
+          <p>8. Bolangiz boshqalarga yordam berishni yoqtiradimi?</p>
+          <div class="options">
+            <label><input type="radio" name="q8" value="S" required> Ha, yordam berishni yaxshi ko‘radi</label>
+            <label><input type="radio" name="q8" value="0"> O‘z ishlariga ko‘proq e’tibor beradi</label>
+          </div>
+        </div>
+        <div class="question" data-index="9">
+          <p>9. Bolangiz yangi texnologiyalar va gadjetlarga qiziqadimi?</p>
+          <div class="options">
+            <label><input type="radio" name="q9" value="I" required> Ha, texnologiyalarni sevadi</label>
+            <label><input type="radio" name="q9" value="0"> Unchalik qiziqmaydi</label>
+          </div>
+        </div>
+        <div class="question" data-index="10">
+          <p>10. Bolangiz loyihalarni boshqarish yoki tashkil qilishni yoqtiradimi?</p>
+          <div class="options">
+            <label><input type="radio" name="q10" value="C" required> Ha, tashkilotchilikni yaxshi ko‘radi</label>
+            <label><input type="radio" name="q10" value="0"> Boshqa ishlarni afzal ko‘radi</label>
+          </div>
+        </div>
+        <div class="question" data-index="11">
+          <p>11. Bolangiz kitob o‘qish yoki hikoyalarni tinglashni yoqtiradimi?</p>
+          <div class="options">
+            <label><input type="radio" name="q11" value="A" required> Ha, o‘qishni yaxshi ko‘radi</label>
+            <label><input type="radio" name="q11" value="0"> Boshqa faoliyatni afzal ko‘radi</label>
+          </div>
+        </div>
+        <div class="question" data-index="12">
+          <p>12. Bolangiz jismoniy faollik (sport, o‘yinlar) bilan shug‘ullanishni yoqtiradimi?</p>
+          <div class="options">
+            <label><input type="radio" name="q12" value="R" required> Ha, faol ishlarni sevadi</label>
+            <label><input type="radio" name="q12" value="0"> Ko‘proq tinch ishlarni yoqtiradi</label>
+          </div>
+        </div>
+        <div class="question" data-index="13">
+          <p>13. Bolangiz boshqalar bilan bahslashish yoki o‘z fikrini himoya qilishni yoqtiradimi?</p>
+          <div class="options">
+            <label><input type="radio" name="q13" value="E" required> Ha, bahslashishni yaxshi ko‘radi</label>
+            <label><input type="radio" name="q13" value="I"> Ko‘proq kelishishga intiladi</label>
+          </div>
+        </div>
+        <div class="question" data-index="14">
+          <p>14. Bolangiz musiqa yoki san’at bilan shug‘ullanishni yoqtiradimi?</p>
+          <div class="options">
+            <label><input type="radio" name="q14" value="A" required> Ha, san’atni sevadi</label>
+            <label><input type="radio" name="q14" value="0"> Boshqa ishlarni afzal ko‘radi</label>
+          </div>
+        </div>
+        <div class="question" data-index="15">
+          <p>15. Bolangiz aniq va batafsil ko‘rsatmalarga rioya qilishni yoqtiradimi?</p>
+          <div class="options">
+            <label><input type="radio" name="q15" value="J" required> Ha, ko‘rsatmalarni yaxshi ko‘radi</label>
+            <label><input type="radio" name="q15" value="P"> Ko‘proq erkin harakat qiladi</label>
+          </div>
+        </div>
+        <div class="question" data-index="16">
+          <p>16. Bolangiz yangi odamlar bilan tanishishni yoqtiradimi?</p>
+          <div class="options">
+            <label><input type="radio" name="q16" value="E" required> Ha, yangi odamlarni sevadi</label>
+            <label><input type="radio" name="q16" value="I"> Ko‘proq tanish odamlar bilan bo‘ladi</label>
+          </div>
+        </div>
+        <div class="question" data-index="17">
+          <p>17. Bolangiz o‘z ishlarini mustaqil ravishda bajarishni afzal ko‘radimi?</p>
+          <div class="options">
+            <label><input type="radio" name="q17" value="I" required> Ha, mustaqil ishlashni yaxshi ko‘radi</label>
+            <label><input type="radio" name="q17" value="E"> Boshqalar bilan hamkorlikni afzal ko‘radi</label>
+          </div>
+        </div>
+        <div class="question" data-index="18">
+          <p>18. Bolangiz tajriba o‘tkazish yoki kashfiyot qilishni yoqtiradimi?</p>
+          <div class="options">
+            <label><input type="radio" name="q18" value="I" required> Ha, tajribalarni sevadi</label>
+            <label><input type="radio" name="q18" value="0"> Boshqa ishlarni afzal ko‘radi</label>
+          </div>
+        </div>
+        <div class="question" data-index="19">
+          <p>19. Bolangiz o‘z ishlarini oldindan rejalashtirishni yoqtiradimi?</p>
+          <div class="options">
+            <label><input type="radio" name="q19" value="J" required> Ha, rejalashtirishni yaxshi ko‘radi</label>
+            <label><input type="radio" name="q19" value="P"> Ko‘proq moslashuvchan bo‘ladi</label>
+          </div>
+        </div>
+        <div class="question" data-index="20">
+          <p>20. Bolangiz boshqalarga rahbarlik qilishni yoqtiradimi?</p>
+          <div class="options">
+            <label><input type="radio" name="q20" value="E" required> Ha, rahbarlikni yaxshi ko‘radi</label>
+            <label><input type="radio" name="q20" value="I"> Ko‘proq yordamchi rolni afzal ko‘radi</label>
+          </div>
+        </div>
+      </div>
+      <button type="button" id="next-btn">Keyingi</button>
+    </form>
+    <div id="result">
+      <h2>Sizning Natijangiz</h2>
+      <p id="result-text"></p>
+      <p><strong>Shaxsiyat turi qisqartmalari izohi:</strong><br>
+      - <strong>E</strong>: Ekstrovert (tashqi dunyoga yo'naltirilgan)<br>
+      - <strong>I</strong>: Introvert (ichki dunyoga yo'naltirilgan)<br>
+      - <strong>T</strong>: O'ylovchi (mantiq va tahlilga asoslangan)<br>
+      - <strong>F</strong>: Hissiyotchi (his-tuyg'ular va qadriyatlarga asoslangan)<br>
+      - <strong>J</strong>: Hukm qiluvchi (reja va tartibga intiluvchi)<br>
+      - <strong>P</strong>: Idrok qiluvchi (moslashuvchan va ochiq fikrli)</p>
+      <button onclick="showContactForm()">Natijalarni olish uchun ma'lumotlaringizni kiriting</button>
+    </div>
+    <form id="contact-form" name="contact" method="POST" data-netlify="true">
+      <input type="hidden" name="form-name" value="contact">
+      <input type="hidden" id="result-data" name="result">
+      <p>Biz siz bilan bog‘lanamiz va batafsil ma’lumot beramiz!</p>
+      <input type="text" name="name" placeholder="Ismingiz" required>
+      <input type="tel" name="phone" placeholder="Telefon raqamingiz" required>
+      <input type="submit" value="Yuborish">
+    </form>
+  </div>
+  <script>
+    let currentQuestion = 1;
+    const totalQuestions = 20;
+
+    function showQuestion(index) {
+      document.querySelectorAll('.question').forEach(q => q.style.display = 'none');
+      document.querySelector(`.question[data-index="${index}"]`).style.display = 'block';
+    }
+
+    function updateProgress() {
+      const answered = currentQuestion - 1;
+      const percentage = (answered / totalQuestions) * 100;
+      document.getElementById('progress-bar').style.width = percentage + '%';
+    }
+
+    document.getElementById('next-btn').addEventListener('click', () => {
+      const current = document.querySelector(`.question[data-index="${currentQuestion}"]`);
+      const selected = current.querySelector('input[type="radio"]:checked');
+      if (!selected) {
+        alert('Iltimos, javob tanlang!');
+        return;
+      }
+      if (currentQuestion < totalQuestions) {
+        currentQuestion++;
+        showQuestion(currentQuestion);
+        updateProgress();
+      } else {
+        calculateResult();
+      }
+    });
+
+    function calculateResult() {
+      let scores = {
+        E: 0, I: 0, T: 0, F: 0, J: 0, P: 0, R: 0, I2: 0, A: 0, S: 0, C: 0
+      };
+      for (let i = 1; i <= 20; i++) {
+        const answer = document.querySelector(`input[name="q${i}"]:checked`).value;
+        if (answer !== '0') scores[answer]++;
+      }
+      let personality = '';
+      personality += scores.E > scores.I ? 'E' : 'I';
+      personality += scores.T > scores.F ? 'T' : 'F';
+      personality += scores.J > scores.P ? 'J' : 'P';
+
+      let percentage_R = scores.R * 100;
+      let percentage_I = (scores.I2 / 3) * 100;
+      let percentage_A = (scores.A / 3) * 100;
+      let percentage_S = scores.S * 100;
+      let percentage_C = scores.C * 100;
+
+      const professions = [
+        { name: "Shifokor", types: ["I", "S"] },
+        { name: "Olim", types: ["I"] },
+        { name: "Muhandis", types: ["R", "I"] },
+        { name: "O'qituvchi", types: ["S", "A"] },
+        { name: "Rassom", types: ["A"] },
+        { name: "Hamshira", types: ["S", "I"] },
+        { name: "Biolog", types: ["I", "R"] },
+        { name: "Kimyogar", types: ["I"] },
+        { name: "Matematik", types: ["I"] },
+        { name: "Psixolog", types: ["S", "I"] }
+      ];
+
+      let professionPercentages = professions.map(prof => {
+        let perc;
+        if (prof.types.length === 1) {
+          perc = prof.types[0] === "R" ? percentage_R :
+                 prof.types[0] === "I" ? percentage_I :
+                 prof.types[0] === "A" ? percentage_A :
+                 prof.types[0] === "S" ? percentage_S :
+                 percentage_C;
+        } else {
+          let perc1 = prof.types[0] === "R" ? percentage_R :
+                      prof.types[0] === "I" ? percentage_I :
+                      prof.types[0] === "A" ? percentage_A :
+                      prof.types[0] === "S" ? percentage_S :
+                      percentage_C;
+          let perc2 = prof.types[1] === "R" ? percentage_R :
+                      prof.types[1] === "I" ? percentage_I :
+                      prof.types[1] === "A" ? percentage_A :
+                      prof.types[1] === "S" ? percentage_S :
+                      percentage_C;
+          perc = (perc1 + perc2) / 2;
+        }
+        if (prof.name === "Shifokor") {
+          perc = Math.min(100, perc + 10);
+        }
+        return { name: prof.name, percentage: Math.round(perc) };
+      });
+
+      professionPercentages.sort((a, b) => b.percentage - a.percentage);
+
+      let resultText = `Bolangizning shaxsiy turi: ${personality}<br><br>`;
+      resultText += "Kasblarga moslik foizlari:<br>";
+      professionPercentages.forEach(prof => {
+        if (prof.name === "Shifokor") {
+          resultText += `- <strong>${prof.name}</strong>: ${prof.percentage}%<br>`;
+        } else {
+          resultText += `- ${prof.name}: ${prof.percentage}%<br>`;
+        }
+      });
+
+      document.getElementById('result-text').innerHTML = resultText;
+      document.getElementById('result-data').value = resultText.replace(/<br>/g, '\n').replace(/<strong>/g, '').replace(/<\/strong>/g, '');
+      document.getElementById('quiz-form').style.display = 'none';
+      document.getElementById('result').style.display = 'block';
+    }
+
+    function showContactForm() {
+      document.getElementById('result').style.display = 'none';
+      document.getElementById('contact-form').style.display = 'block';
+    }
+
+    showQuestion(1);
+  </script>
+</body>
+</html>
