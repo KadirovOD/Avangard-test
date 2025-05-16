@@ -114,8 +114,8 @@
     <div class="container">
         <!-- Boshlang‘ich sahifa -->
         <div id="introPage">
-            <h1>Kasb Tanlash Testi</h1>
-            <p>Bu test <strong>Hollandning kasbiy qiziqishlar nazariyasi</strong> va <strong>Myers-Briggs shaxsiyat tipologiyasi</strong> usullariga asoslangan. Test sizning qiziqishlaringiz va qobiliyatlaringizni baholaydi va kelajakdagi kasbingizga mosligingizni aniqlaydi. 20 ta savolga javob bering va natijalarni ko‘ring!</p>
+            <h1>Qiziqish va Qobiliyatni aniqlash Testi</h1>
+            <p>Bu test <strong>Hollandning kasbiy qiziqishlar nazariyasi</strong> (RIASEC modeli: Realistik, Tadqiqotchi, Ijodkor, Ijtimoiy, Tadbirkor, An’anaviy) va <strong>Myers-Briggs shaxsiyat tipologiyasi</strong> (shaxsiyatni muloqot, fikrlash va qaror qabul qilish uslublari bo‘yicha baholash) usullariga asoslanib tuzilgan. Test o‘quvchilar uchun maxsus tayyorlangan bo‘lib, qiziqishlaringizni aniqlashga yordam beradi. 20 ta savolga javob bering va o‘zingizga qaysi yo‘nalish mos kelishini bilib oling!</p>
             <button class="button" onclick="startTest()">Testni Boshlash</button>
         </div>
 
@@ -134,36 +134,176 @@
         <div id="resultPage" class="hidden">
             <h2>Sizning Natijalaringiz</h2>
             <div id="results"></div>
-            <p style="margin-top: 30px; font-weight: bold;">Natijalarni muhokama qilish uchun mutaxassis bilan bog‘laning!</p>
+            <p style="margin-top: 30px; font-weight: bold;">Natijalarni muhokama qilish uchun MUTAXASIS bilan bog‘laning!</p>
             <a href="http://avangardschool.uz/konsultatsiya" target="_blank">
-                <button class="button consultation-button">Mutaxasis bilan Bog‘lanish</button>
+                <button class="button consultation-button">MUTAXASIS bilan Bog‘lanish</button>
             </a>
         </div>
     </div>
 
     <script>
-        // Test savollari (har birida 4 ta variant)
+        // Test savollari (maktab o‘quvchilari uchun moslashtirilgan, Holland va Myers-Briggs nazariyalariga mos)
         const questions = [
-            { question: "Siz ko‘proq qaysi faoliyatni yoqtirasiz?", options: ["Yangi narsalarni o‘rganish", "Jamoada ishlash", "Ijodiy ishlar", "Insonlarning sog‘lig‘ini saqlash"] },
-            { question: "Qiyin muammoni yechishda qanday yondashasiz?", options: ["Tahlil qilaman", "Tez harakat qilaman", "Intuitsiyamga tayanaman", "Jamoa bilan maslahatlashaman"] },
-            { question: "Bo‘sh vaqtingizda nima bilan shug‘ullanishni yoqtirasiz?", options: ["Kitob o‘qish", "Sport bilan shug‘ullanish", "Rassomlik", "Texnologiyalarni o‘rganish"] },
-            { question: "Siz uchun muhim bo‘lgan ish muhiti qanday?", options: ["Tinch va tartibli", "Faol va dinamik", "Ijodiy va erkin", "Hamkorlikka asoslangan"] },
-            { question: "Siz qanday odam sifatida tanilgan bo‘lishni xohlaysiz?", options: ["Aqlli va tahlilchi", "Rahbar va tashkilotchi", "Ijodkor", "Yordamchi"] },
-            { question: "Yangi loyiha boshlaganda qanday harakat qilasiz?", options: ["Reja tuzaman", "Darhol ishga kirishaman", "G‘oyalarni yig‘aman", "Jamoa bilan muhokama qilaman"] },
-            { question: "Qanday ish sizni ko‘proq qiziqtiradi?", options: ["Ilmiy tadqiqotlar", "Tadbirkorlik", "San’at va dizayn", "Ijtimoiy loyihalar"] },
-            { question: "Sizning eng kuchli tomoningiz nima?", options: ["Tahlil qilish", "Muloqot qilish", "Yaratuvchanlik", "Tashkilotchilik"] },
-            { question: "Stressli vaziyatda qanday harakat qilasiz?", options: ["Tinchlanaman va o‘ylayman", "Tez qaror qabul qilaman", "Yordam so‘rayman", "Ijodiy yechaman"] },
-            { question: "Qanday loyihalarda ishlashni yoqtirasiz?", options: ["Uzoq muddatli va chuqur", "Tez va dinamik", "Yaratuvchan", "Jamoaviy"] },
-            { question: "Sizning eng sevimli mashg‘ulotingiz nima?", options: ["Texnologiyalar bilan ishlash", "Sport", "Rassomlik yoki yozish", "O‘rgatish"] },
-            { question: "Siz uchun eng muhim qadriyat nima?", options: ["Bilim olish", "Muvaffaqiyat", "Erkinlik", "Hamkorlik"] },
-            { question: "Qanday muhitda o‘zingizni qulay his qilasiz?", options: ["Tartibli", "Raqobatbardosh", "Ijodiy", "Do‘stona"] },
-            { question: "Sizning orzuingizdagi kasb qanday bo‘lishi kerak?", options: ["Ilmiy", "Biznesga asoslangan", "San’at", "Ijtimoiy"] },
-            { question: "Muammoni hal qilishda qaysi usuldan foydalanasiz?", options: ["Ma’lumotlarni tahlil qilish", "Tez harakat", "G‘oyalarni sinash", "Maslahat so‘rash"] },
-            { question: "Qanday loyiha sizni ilhomlantiradi?", options: ["Ilmiy kashfiyotlar", "Yangi biznes", "San’at asari", "Jamiyatga foyda"] },
-            { question: "Sizning eng katta qobiliyatingiz nima?", options: ["Mantiqiy fikrlash", "Rahbarlik", "Ijodkorlik", "Hamkorlik"] },
-            { question: "Siz qanday odamlar bilan ishlashni yoqtirasiz?", options: ["Aqlli", "Faol", "Ijodiy", "Qo‘llab-quvvatlovchi"] },
-            { question: "Bo‘sh vaqtingizda qanday faoliyat sizni xursand qiladi?", options: ["O‘qish", "Sport", "Musiqa", "Do‘stlar bilan vaqt o‘tkazish"] },
-            { question: "Sizning kelajakdagi maqsadingiz nima?", options: ["Ilmiy kashfiyot", "Biznesmen bo‘lish", "San’atkor bo‘lish", "Jamiyatga yordam"] }
+            { question: "Maktabda qaysi darslarni ko‘proq yoqtirasiz?", options: [
+                "Matematika yoki tabiatshunoslik kabi darslarda bilim ulashish", 
+                "Biologiya yoki kimyo kabi odamlar hayotini o‘rganish", 
+                "Rassomlik yoki adabiyot kabi ijodiy darslar", 
+                "Texnologiya yoki fizika kabi loyihalar bilan ishlash", 
+                "Iqtisod yoki geografiya kabi strategik darslar", 
+                "Huquq yoki fuqarolik darslarida adolat haqida o‘rganish"
+            ]},
+            { question: "Bo‘sh vaqtingizda nima qilishni yoqtirasiz?", options: [
+                "Do‘stlarimga biror narsani tushuntirish yoki o‘rgatish", 
+                "Odamlar yoki hayvonlarga g‘amxo‘rlik qilish", 
+                "Chizish, yozish yoki ijodiy narsalar bilan shug‘ullanish", 
+                "Biror narsani yasash yoki loyiha bilan ishlash", 
+                "O‘yinlar o‘ynash yoki reja tuzish", 
+                "Qoidalar yoki adolat haqida o‘qish va o‘ylash"
+            ]},
+            { question: "Sizga qanday mashg‘ulotlar qiziqarli?", options: [
+                "Do‘stlarim bilan bilim ulashish yoki o‘qish", 
+                "Tabiat yoki odamlar hayoti haqida o‘rganish", 
+                "O‘z g‘oyalarimni chizish yoki hikoya yozish", 
+                "Biror narsani o‘ylab topib, uni yasash", 
+                "Yangi imkoniyatlar haqida o‘ylash va reja tuzish", 
+                "Adolatli qarorlar qabul qilish yoki muhokama qilish"
+            ]},
+            { question: "Siz qanday do‘stlar bilan vaqt o‘tkazishni yoqtirasiz?", options: [
+                "Birgalikda o‘qishni yoki bir-birimizga yordam berishni yoqtiradiganlar", 
+                "G‘amxo‘r va yordam berishni yoqtiradiganlar", 
+                "Ijodiy g‘oyalarni baham ko‘radiganlar", 
+                "Biror narsani yasashni yoki loyiha qilishni yoqtiradiganlar", 
+                "Yangi g‘oyalar bilan harakat qiladiganlar", 
+                "Adolat va qoidalarni muhokama qiladiganlar"
+            ]},
+            { question: "Siz qanday loyiha qilishni xohlaysiz?", options: [
+                "Do‘stlarimga biror narsani o‘rgatadigan loyiha", 
+                "Odamlar yoki tabiatga yordam beradigan loyiha", 
+                "Ijodiy narsa yaratadigan loyiha (masalan, rasm yoki hikoya)", 
+                "Biror narsani yasash yoki loyihalash bilan bog‘liq loyiha", 
+                "Yangi imkoniyatlar ochadigan loyiha", 
+                "Adolatli qarorlar qabul qiladigan loyiha"
+            ]},
+            { question: "Maktabda qanday tadbirlarni yoqtirasiz?", options: [
+                "Bilim ulashish yoki o‘quvchilarga yordam berish tadbirlari", 
+                "Sog‘liq yoki tabiatni himoya qilish tadbirlari", 
+                "San’at yoki ijodiy ko‘rgazmalar", 
+                "Loyiha yoki texnik ishlar bilan bog‘liq tadbirlar", 
+                "Raqobat yoki o‘yinli tadbirlar", 
+                "Adolatli muhokama yoki qoidalar bilan bog‘liq tadbirlar"
+            ]},
+            { question: "Siz qaysi kitob yoki hikoyalarni o‘qishni yoqtirasiz?", options: [
+                "O‘qituvchilar yoki bilim haqidagi hikoyalar", 
+                "Shifokorlar yoki tabiat haqidagi kitoblar", 
+                "Ijodiy yoki fantastik hikoyalar", 
+                "Texnika yoki ixtirolar haqidagi kitoblar", 
+                "Tadbirkorlar yoki muvaffaqiyat haqidagi hikoyalar", 
+                "Adolat yoki qonun haqidagi hikoyalar"
+            ]},
+            { question: "Siz qanday o‘yinlarni yoqtirasiz?", options: [
+                "Birgalikda o‘ynab, o‘rganadigan o‘yinlar", 
+                "Tabiat yoki odamlar haqida o‘rganadigan o‘yinlar", 
+                "O‘z g‘oyalarimni ishlatadigan ijodiy o‘yinlar", 
+                "Reja tuzib, quradigan o‘yinlar", 
+                "Raqobatli va strategik o‘yinlar", 
+                "Qoidalarga asoslangan o‘yinlar"
+            ]},
+            { question: "Siz qaysi fan bo‘yicha ko‘proq o‘rganishni xohlaysiz?", options: [
+                "Bilim ulashishga yordam beradigan fanlar", 
+                "Odamlar yoki tabiat haqidagi fanlar", 
+                "Ijodiy yoki san’at bilan bog‘liq fanlar", 
+                "Texnika yoki loyihalar bilan bog‘liq fanlar", 
+                "Strategiya yoki rejalashtirish fanlari", 
+                "Adolat yoki qoidalar haqidagi fanlar"
+            ]},
+            { question: "Siz qanday muhitda o‘zingizni qulay his qilasiz?", options: [
+                "Do‘stlarim bilan bilim ulashadigan muhit", 
+                "G‘amxo‘rlik va yordam muhiti", 
+                "Ijodiy va erkin muhit", 
+                "Rejali va tartibli muhit", 
+                "Raqobatli va qiziqarli muhit", 
+                "Adolatli va qoidalar muhiti"
+            ]},
+            { question: "Siz qanday jamoada ishlashni yoqtirasiz?", options: [
+                "Birgalikda o‘rganadigan jamoa", 
+                "Yordam beradigan jamoa", 
+                "Ijodiy g‘oyalarni baham ko‘radigan jamoa", 
+                "Reja bilan ishlaydigan jamoa", 
+                "Raqobatli jamoa", 
+                "Adolatli jamoa"
+            ]},
+            { question: "Siz qaysi natijadan xursand bo‘lasiz?", options: [
+                "Do‘stlarimga yordam berish", 
+                "Tabiat yoki odamlarga foyda keltirish", 
+                "Ijodiy narsa yaratish", 
+                "Loyiha yoki ishni muvaffaqiyatli tugatish", 
+                "Yangi imkoniyatlar ochish", 
+                "Adolatli natija olish"
+            ]},
+            { question: "Siz qanday odam sifatida esda qolishni xohlaysiz?", options: [
+                "Do‘stlarimga yordam beruvchi", 
+                "G‘amxo‘r va yordamchi", 
+                "Ijodiy va yangilik kirituvchi", 
+                "Rejali va muvaffaqiyatli", 
+                "Tadbirkor va faol", 
+                "Adolatli va ishonchli"
+            ]},
+            { question: "Siz qaysi mashg‘ulotdan ko‘proq zavqlanasiz?", options: [
+                "O‘qish yoki do‘stlarimga tushuntirish", 
+                "Tabiat yoki odamlarga yordam berish", 
+                "Chizish yoki yangi g‘oyalar o‘ylab topish", 
+                "Biror narsani yasash yoki loyiha qilish", 
+                "Reja tuzib, yangi imkoniyatlar ochish", 
+                "Adolatli qarorlar qabul qilish"
+            ]},
+            { question: "Siz qaysi muammoni hal qilishni yoqtirasiz?", options: [
+                "Do‘stlarim bilan muhokama qilib hal qilish", 
+                "Odamlar yoki tabiat bilan bog‘liq muammolar", 
+                "Ijodiy yo‘l bilan hal qilish", 
+                "Reja tuzib, bosqichma-bosqich hal qilish", 
+                "Tez harakat qilib, sinab ko‘rish", 
+                "Qoidalarga asoslanib hal qilish"
+            ]},
+            { question: "Siz qaysi faoliyatdan ko‘proq ilhomlanasiz?", options: [
+                "Do‘stlarimga yordam berish orqali", 
+                "Tabiat yoki odamlarga g‘amxo‘rlik qilish orqali", 
+                "Yangi g‘oyalar o‘ylab topish orqali", 
+                "Loyiha yoki ishni muvaffaqiyatli tugatish orqali", 
+                "Yangi imkoniyatlar ochish orqali", 
+                "Adolatli qarorlar qabul qilish orqali"
+            ]},
+            { question: "Siz qaysi dars mashg‘ulotlarini yoqtirasiz?", options: [
+                "Birgalikda o‘qish yoki muhokama qilish", 
+                "Tabiat yoki odamlar haqida o‘rganish", 
+                "Chizish yoki ijodiy ishlar", 
+                "Loyiha yoki texnik ishlar", 
+                "Raqobatli yoki strategik mashg‘ulotlar", 
+                "Adolat yoki qoidalar haqida o‘rganish"
+            ]},
+            { question: "Siz qaysi film yoki multfilmlarni yoqtirasiz?", options: [
+                "O‘qituvchilar yoki bilim haqidagi filmlar", 
+                "Shifokorlar yoki tabiat haqidagi filmlar", 
+                "Ijodiy yoki hayoliy filmlar", 
+                "Texnika yoki ixtirolar haqidagi filmlar", 
+                "Tadbirkorlar yoki muvaffaqiyat haqidagi filmlar", 
+                "Adolat yoki qonun haqidagi filmlar"
+            ]},
+            { question: "Siz qaysi muhitda o‘qishni yoqtirasiz?", options: [
+                "Do‘stlarim bilan birgalikda o‘qish", 
+                "Tinch va g‘amxo‘r muhit", 
+                "Ijodiy va qiziqarli muhit", 
+                "Rejali va tartibli muhit", 
+                "Raqobatli va faol muhit", 
+                "Adolatli va qoidalar muhiti"
+            ]},
+            { question: "Siz qaysi faoliyatdan ko‘proq zavqlanasiz?", options: [
+                "Do‘stlarimga biror narsani o‘rgatish", 
+                "Tabiat yoki odamlarga yordam berish", 
+                "Yangi g‘oyalar o‘ylab topish", 
+                "Loyiha yoki biror narsani yasash", 
+                "Reja tuzib, yangi imkoniyatlar ochish", 
+                "Adolatli qarorlar qabul qilish"
+            ]}
         ];
 
         // Foydalanuvchi javoblari
@@ -240,48 +380,31 @@
         // Natijalarni hisoblash va ko‘rsatish
         function calculateAndShowResults() {
             const careerScores = {
-                "Dasturchi": 0,
-                "Tadbirkor": 0,
-                "Dizayner": 0,
                 "O‘qituvchi": 0,
                 "Shifokor": 0,
+                "Ijodkor": 0,
                 "Muhandis": 0,
-                "Huquqshunos": 0,
-                "Moliyachi": 0
+                "Biznesmen": 0,
+                "Huquqshunos": 0
             };
 
-            testResults.forEach(result => {
+            testResults.forEach((result, index) => {
                 const answer = result.answer.toLowerCase();
-                if (answer.includes("o‘rganish") || answer.includes("texnologiya") || answer.includes("tahlil") || answer.includes("ilmiy")) {
-                    careerScores["Dasturchi"] += 10;
-                }
-                if (answer.includes("biznes") || answer.includes("tadbirkorlik") || answer.includes("rahbar") || answer.includes("tez")) {
-                    careerScores["Tadbirkor"] += 10;
-                }
-                if (answer.includes("ijodiy") || answer.includes("san’at") || answer.includes("rassomlik") || answer.includes("dizayn")) {
-                    careerScores["Dizayner"] += 10;
-                }
-                if (answer.includes("yordam") || answer.includes("hamkorlik") || answer.includes("o‘rgatish") || answer.includes("ijtimoiy")) {
-                    careerScores["O‘qituvchi"] += 10;
-                }
-                if (answer.includes("sog‘liq") || answer.includes("tibbiyot") || answer.includes("salomatlik")) {
-                    careerScores["Shifokor"] += 10;
-                }
-                if (answer.includes("texnik") || answer.includes("muhandis") || answer.includes("texnika")) {
-                    careerScores["Muhandis"] += 10;
-                }
-                if (answer.includes("huquq") || answer.includes("huquqiy") || answer.includes("adolat")) {
-                    careerScores["Huquqshunos"] += 10;
-                }
-                if (answer.includes("moliya") || answer.includes("moliyaviy") || answer.includes("hisob")) {
-                    careerScores["Moliyachi"] += 10;
+                const careerIndex = questions[index].options.indexOf(result.answer);
+                switch (careerIndex) {
+                    case 0: careerScores["O‘qituvchi"] += 10; break;
+                    case 1: careerScores["Shifokor"] += 10; break;
+                    case 2: careerScores["Ijodkor"] += 10; break;
+                    case 3: careerScores["Muhandis"] += 10; break;
+                    case 4: careerScores["Biznesmen"] += 10; break;
+                    case 5: careerScores["Huquqshunos"] += 10; break;
                 }
             });
 
             const totalScore = Object.values(careerScores).reduce((sum, score) => sum + score, 0);
             const careerPercentages = {};
             for (const career in careerScores) {
-                careerPercentages[career] = totalScore ? Math.round((careerScores[career] / totalScore) * 100) : 12.5;
+                careerPercentages[career] = totalScore ? Math.round((careerScores[career] / totalScore) * 100) : 16.67;
             }
 
             // Eng yuqori foizga ega kasbni aniqlash
@@ -295,7 +418,7 @@
             }
 
             const resultsDiv = document.getElementById('results');
-            resultsDiv.innerHTML = `<h3>Sizning asosiy tippingiz: ${maxCareer}</h3><p>(Moslik: ${maxPercentage}%)</p><br><h3>Barcha kasblarga mosligingiz:</h3>`;
+            resultsDiv.innerHTML = `<h3>Sizning asosiy qiziqishingiz: ${maxCareer}</h3><p>(Moslik: ${maxPercentage}%)</p><br><h3>Barcha yo‘nalishlarga mosligingiz:</h3>`;
             for (const career in careerPercentages) {
                 resultsDiv.innerHTML += `<p>${career}: ${careerPercentages[career]}%</p>`;
             }
